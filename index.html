@@ -2,12 +2,11 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>TeX to SVG (Standalone)</title>
+  <title>TeX to SVG (Standalone Fully Inlined)</title>
   <script>
     window.MathJax = {
       tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-      // standalone: true を追加して、必要な定義も埋め込む
-      svg: { fontCache: 'global', standalone: true },
+      svg: { fontCache: 'none', standalone: true },
       startup: {
         ready: () => {
           MathJax.startup.defaultReady();
@@ -16,10 +15,9 @@
           document.getElementById("renderBtn").onclick = () => {
             const input = document.getElementById("latexInput").value;
             MathJax.tex2svgPromise(input).then(node => {
-              // standalone モードなので、生成されたSVGはそのまま完全なもの
               const svg = node.querySelector("svg");
               const output = document.getElementById("output");
-              output.innerHTML = ""; // 以前のSVGをクリア
+              output.innerHTML = ""; // 前のSVGをクリア
               output.appendChild(svg);
             }).catch((err) => {
               console.error("MathJaxの変換に失敗:", err);
@@ -35,7 +33,6 @@
             }
             const serializer = new XMLSerializer();
             let svgString = serializer.serializeToString(svgElement);
-            // XML宣言を先頭に追加
             if (!svgString.startsWith('<?xml')) {
               svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
             }
@@ -55,7 +52,7 @@
   </script>
 </head>
 <body>
-  <h2>TeX数式 → SVG画像 (Standalone)</h2>
+  <h2>TeX数式 → SVG画像 (Standalone Fully Inlined)</h2>
   <textarea id="latexInput" rows="4" cols="60">E = mc^2</textarea><br>
   <button id="renderBtn">SVGを生成</button>
   <button id="downloadBtn">SVGをダウンロード</button>
