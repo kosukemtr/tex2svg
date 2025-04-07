@@ -2,29 +2,31 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>TeX to SVG</title>
+  <title>TeX to SVG (Standalone)</title>
   <script>
     window.MathJax = {
       tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-      svg: { fontCache: 'global' },
+      // standalone: true を追加して、必要な定義も埋め込む
+      svg: { fontCache: 'global', standalone: true },
       startup: {
         ready: () => {
           MathJax.startup.defaultReady();
 
-          // SVG生成ボタンの設定
+          // SVG生成ボタンのイベント設定
           document.getElementById("renderBtn").onclick = () => {
             const input = document.getElementById("latexInput").value;
             MathJax.tex2svgPromise(input).then(node => {
+              // standalone モードなので、生成されたSVGはそのまま完全なもの
               const svg = node.querySelector("svg");
               const output = document.getElementById("output");
-              output.innerHTML = ""; // 古いSVGをクリア
+              output.innerHTML = ""; // 以前のSVGをクリア
               output.appendChild(svg);
             }).catch((err) => {
               console.error("MathJaxの変換に失敗:", err);
             });
           };
 
-          // SVGダウンロードボタンの設定
+          // SVGダウンロードボタンのイベント設定
           document.getElementById("downloadBtn").onclick = () => {
             const svgElement = document.querySelector("#output svg");
             if (!svgElement) {
@@ -33,7 +35,7 @@
             }
             const serializer = new XMLSerializer();
             let svgString = serializer.serializeToString(svgElement);
-            // XML宣言を追加（無い場合）
+            // XML宣言を先頭に追加
             if (!svgString.startsWith('<?xml')) {
               svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
             }
@@ -53,13 +55,13 @@
   </script>
 </head>
 <body>
-  <h2>TeX数式 → SVG画像</h2>
+  <h2>TeX数式 → SVG画像 (Standalone)</h2>
   <textarea id="latexInput" rows="4" cols="60">E = mc^2</textarea><br>
   <button id="renderBtn">SVGを生成</button>
   <button id="downloadBtn">SVGをダウンロード</button>
   <div id="output" style="margin-top:20px;"></div>
   
-  <!-- MathJaxスクリプト -->
+  <!-- MathJaxのCDNスクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </body>
 </html>
