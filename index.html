@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>TeX to SVG</title>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' },
+      startup: {
+        ready: () => {
+          MathJax.startup.defaultReady();
+          document.getElementById("renderBtn").onclick = () => {
+            const input = document.getElementById("latexInput").value;
+            MathJax.tex2svgPromise(input).then(node => {
+              const svg = node.querySelector("svg");
+              const output = document.getElementById("output");
+              output.innerHTML = ""; // clear old SVG
+              output.appendChild(svg);
+            });
+          };
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <h2>TeX数式 → SVG画像</h2>
+  <textarea id="latexInput" rows="4" cols="60">E = mc^2</textarea><br>
+  <button id="renderBtn">SVGを生成</button>
+  <div id="output" style="margin-top:20px;"></div>
+</body>
+</html>
