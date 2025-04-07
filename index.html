@@ -10,25 +10,30 @@
       startup: {
         ready: () => {
           MathJax.startup.defaultReady();
+          // DOMが確実に存在しているので設定可能
           document.getElementById("renderBtn").onclick = () => {
             const input = document.getElementById("latexInput").value;
             MathJax.tex2svgPromise(input).then(node => {
               const svg = node.querySelector("svg");
               const output = document.getElementById("output");
-              output.innerHTML = ""; // clear old SVG
+              output.innerHTML = "";
               output.appendChild(svg);
+            }).catch((err) => {
+              console.error("MathJaxの変換に失敗:", err);
             });
           };
         }
       }
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
   <h2>TeX数式 → SVG画像</h2>
   <textarea id="latexInput" rows="4" cols="60">E = mc^2</textarea><br>
   <button id="renderBtn">SVGを生成</button>
   <div id="output" style="margin-top:20px;"></div>
+  
+  <!-- MathJaxのスクリプトをbodyの最後に配置 -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </body>
 </html>
